@@ -140,9 +140,8 @@ class s_vector
             catch(...)
             {
                 delete[] this->elements;
-                throw std::invalid_argument("s_vector::set_elements::invalid_elements\n");
-            }
-            
+                throw std::invalid_argument("s_vector::set_elements()::invalid_elements\n");
+            }        
         }
 
         bool push_back(const T& element)
@@ -217,11 +216,18 @@ class s_vector
                 return false;
             }
             
-            for (size_t i = 0; i < this->size; ++i)
+            try
             {
-                this->elements[i] = other.elements[i];
+                for (size_t i = 0; i < this->size; ++i)
+                {
+                    this->elements[i] = other.elements[i];
+                }
             }
-
+            catch(...)
+            {
+                return false;
+            }
+            
             return true;
         }
 
@@ -248,14 +254,20 @@ class s_vector
                 return false;
             }
 
-            this->capacity *= 2;
-         
-            for (size_t i = 0; i < this->size; ++i)
+            try
             {
-                buffer[i] = this->elements[i];
+                for (size_t i = 0; i < this->size; ++i)
+                {
+                    buffer[i] = this->elements[i];
+                }
             }
-
+            catch(...)
+            {
+                return false;
+            }
+            
             delete[] this->elements;
+            this->capacity *= 2;
             this->elements = buffer; 
 
             return true;          
