@@ -21,24 +21,20 @@ class s_vector
             }
             catch(const std::bad_alloc& e)
             {
-                std::cout << "s_vector::ctor()::could_not_allocate_memory\n";
-                this->elements = nullptr;
-                return;
+                throw std::runtime_error("s_vector::ctor()::could_not_allocate_memory\n");              
             }         
         }
 
-        s_vector(const T* elements, const size_t size, const size_t capacity)
+        s_vector(T* elements, size_t size, size_t capacity)
         {
             if(!is_valid_size(size))
             {
-                std::cout << "s_vector::ctor::invalid_size\n";
-                return;
+                throw std::invalid_argument("s_vector::ctor(args)::invalid_size\n");
             }
 
             if(!is_valid_capacity(capacity))
             {
-                std::cout << "s_vector::ctor::invalid_capacity\n";
-                return;
+                throw std::invalid_argument("s_vector::ctor(args)::invalid_capacity\n");
             }
 
             this->size = size;
@@ -50,15 +46,21 @@ class s_vector
             }
             catch(const std::bad_alloc& e)
             {
-                std::cout << "s_vector::ctor()::could_not_allocate_memory\n";
-                this->free();
-                return;
+                throw std::runtime_error("s_vector::ctor(args)::could_not_allocate_memory\n");
             }
-            
-            for (size_t i = 0; i < this->size; ++i)
+
+            try
             {
-                this->elements[i] = elements[i];
+                for (size_t i = 0; i < this->size; ++i)
+                {
+                    this->elements[i] = elements[i];
+                }
             }
+            catch(...)
+            {
+                delete[] this->elements;
+                throw std::invalid_argument("s_vector::ctor(args)::invalid_elements\n");
+            }      
         }
 
         s_vector(const s_vector<T>& other)
@@ -101,8 +103,7 @@ class s_vector
         {
             if(!is_valid_size(size))
             {
-                std::cout << "s_vector::set_size::invalid_size\n";
-                return;
+                throw std::invalid_argument("s_vector::set_size()::invalid_size\n");
             }
 
             this->size = size;
@@ -112,8 +113,7 @@ class s_vector
         {
             if(!is_valid_capacity(capacity))
             {
-                std::cout << "s_vector::set_capacity::invalid_capacity\n";
-                return;
+                throw std::invalid_argument("s_vector::set_capacity()::invalid_capacity\n");
             }
 
             this->capacity = capacity;
@@ -121,43 +121,51 @@ class s_vector
 
         void set_elements(const T* elements)
         {
-            delete[] this->elements;
-            this->elements = nullptr;
-
             try
             {
                 this->elements = new T[this->capacity];
             }
             catch(const std::bad_alloc& e)
             {
-                std::cout << "s_vector::set_elements()::could_not_allocate_memory\n";
-                this->free();
-                return;
+                throw std::runtime_error("s_vector::set_elements()::could_not_allocate_memory\n");
             }
             
-            for (size_t i = 0; i < this->size; ++i)
+            try
             {
-                this->elements[i] = elements[i];
-            }          
+                for (size_t i = 0; i < this->size; ++i)
+                {
+                    this->elements[i] = elements[i];
+                }          
+            }
+            catch(...)
+            {
+                delete[] this->elements;
+                throw std::invalid_argument("s_vector::set_elements::invalid_elements\n");
+            }
+            
         }
 
-        void push_back(const T& element)
+        bool push_back(const T& element)
         {
             if(this->size >= this->capacity)
             {
-                this->resize();
+                if(!this->resize())
+                {
+                    return false;
+                }
             }
 
             this->elements[this->size] = element;
             ++this->size;
+
+            return true;
         }
 
-        void pop_index(const size_t idx)
+        bool pop_index(size_t idx)
         {
             if(idx < 0 || idx >= this->size)
             {
-                std::cout << "s_vector::pop_index()::cannot_pop_element\n";
-                return;
+                return false;
             }
 
             for (size_t i = idx; i < this->size - 1; ++i)
@@ -166,9 +174,10 @@ class s_vector
             }
 
             --this->size;
+            return true;
         }
 
-        T& operator[](const size_t idx) const
+        const T& operator[](size_t idx) const
         {
             if(idx < 0 || idx >= this->size)
             {
@@ -186,7 +195,7 @@ class s_vector
 
         const bool is_valid_size(const size_t size) const
         {
-            return size >= 0;
+            return size >= 0 && size < this->capacity;
         }
 
         const bool is_valid_capacity(const size_t capacity) const
@@ -194,7 +203,7 @@ class s_vector
             return capacity >= 8;
         }
 
-        void copy(const s_vector<T>& other)
+        bool copy(const s_vector<T>& other)
         {
             this->size = other.size;
             this->capacity = other.capacity;
@@ -205,15 +214,15 @@ class s_vector
             }
             catch(const std::bad_alloc& e)
             {
-                std::cout << "s_vector::copy()::could_not_allocate_memory\n";
-                this->free();
-                return;
+                return false;
             }
             
             for (size_t i = 0; i < this->size; ++i)
             {
                 this->elements[i] = other.elements[i];
             }
+
+            return true;
         }
 
         void free()
@@ -225,22 +234,21 @@ class s_vector
             this->capacity = 0;
         }
 
-        void resize()
+        bool resize()
         {
-            this->capacity *= 2;
             T* buffer = nullptr;
 
             try
             {
-                buffer = new T[this->capacity];
+                buffer = new T[this->capacity * 2];
             }
             catch(const std::bad_alloc& e)
             {
-                std::cout << "s_vector::resize()::could_not_allocate_memory\n";
                 delete[] buffer;
-                this->capacity /= 2;
-                return;
+                return false;
             }
+
+            this->capacity *= 2;
          
             for (size_t i = 0; i < this->size; ++i)
             {
@@ -248,7 +256,9 @@ class s_vector
             }
 
             delete[] this->elements;
-            this->elements = buffer;           
+            this->elements = buffer; 
+
+            return true;          
         }
 };
 
