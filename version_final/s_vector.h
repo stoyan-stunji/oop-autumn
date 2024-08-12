@@ -19,35 +19,39 @@ class s_vector
             {
                 this->elements = new T[this->capacity];
             }
-            catch(const std::bad_alloc& e)
+            catch (const std::bad_alloc& e)
             {
-                throw std::runtime_error("s_vector::ctor()::could_not_allocate_memory\n");              
-            }         
+                throw std::runtime_error("s_vector::ctor()::could_not_allocate_memory\n");
+            }          
         }
 
         s_vector(T* elements, size_t size, size_t capacity)
         {
-            if(!is_valid_size(size))
+            if(!elements)
             {
-                throw std::invalid_argument("s_vector::ctor(args)::invalid_size\n");
+                throw std::invalid_argument("s_vector::ctor(args)::invalid_elements\n");
             }
 
             if(!is_valid_capacity(capacity))
             {
                 throw std::invalid_argument("s_vector::ctor(args)::invalid_capacity\n");
             }
-
-            this->size = size;
             this->capacity = capacity;
+
+            if(!is_valid_size(size))
+            {
+                throw std::invalid_argument("s_vector::ctor(args)::invalid_size\n");
+            }
+            this->size = size;
 
             try
             {
                 this->elements = new T[this->capacity];
             }
-            catch(const std::bad_alloc& e)
+            catch (const std::bad_alloc& e)
             {
                 throw std::runtime_error("s_vector::ctor(args)::could_not_allocate_memory\n");
-            }
+            }     
 
             try
             {
@@ -56,16 +60,20 @@ class s_vector
                     this->elements[i] = elements[i];
                 }
             }
-            catch(...)
+            catch (...)
             {
                 delete[] this->elements;
-                throw std::invalid_argument("s_vector::ctor(args)::invalid_elements\n");
-            }      
+                this->elements = nullptr;
+                throw;
+            }        
         }
 
         s_vector(const s_vector<T>& other)
         {
-            copy(other);
+            if (!copy(other))
+            {
+                throw std::runtime_error("s_vector::copy_ctor::copy_failed\n");
+            }
         }
 
         s_vector<T>& operator=(const s_vector<T>& other)
@@ -99,7 +107,7 @@ class s_vector
             return this->elements;
         }
 
-        void set_size(const size_t size)
+        void set_size(size_t size)
         {
             if(!is_valid_size(size))
             {
@@ -109,7 +117,7 @@ class s_vector
             this->size = size;
         }
 
-        void set_capacity(const size_t capacity)
+        void set_capacity(size_t capacity)
         {
             if(!is_valid_capacity(capacity))
             {
@@ -119,29 +127,38 @@ class s_vector
             this->capacity = capacity;
         }
 
-        void set_elements(const T* elements)
+        void set_elements(T* elements)
         {
+            delete[] this->elements;
+            this->elements = nullptr;
+            
+            if(!elements)
+            {
+                throw std::invalid_argument("s_vector::set_elements()::invalid_elements\n");
+            }
+
             try
             {
                 this->elements = new T[this->capacity];
             }
-            catch(const std::bad_alloc& e)
+            catch (const std::bad_alloc& e)
             {
                 throw std::runtime_error("s_vector::set_elements()::could_not_allocate_memory\n");
-            }
-            
+            }     
+
             try
             {
                 for (size_t i = 0; i < this->size; ++i)
                 {
                     this->elements[i] = elements[i];
-                }          
+                }
             }
-            catch(...)
+            catch (...)
             {
                 delete[] this->elements;
-                throw std::invalid_argument("s_vector::set_elements()::invalid_elements\n");
-            }        
+                this->elements = nullptr;
+                throw;
+            }      
         }
 
         bool push_back(const T& element)
@@ -180,10 +197,18 @@ class s_vector
         {
             if(idx < 0 || idx >= this->size)
             {
-                throw std::out_of_range("s_vector::operator[]\n");
+                throw std::out_of_range("s_vector::operator[]::invalid_index\n");
             }
 
             return this->elements[idx];
+        }
+
+        void print_io() const
+        {
+            for (std::size_t i = 0; i < this->size; ++i)
+            {
+                std::cout << this->elements[i] << ' ';
+            }        
         }
 
     private:
@@ -204,6 +229,11 @@ class s_vector
 
         bool copy(const s_vector<T>& other)
         {
+            if(!other.elements)
+            {
+                return false;
+            }
+
             this->size = other.size;
             this->capacity = other.capacity;
 
@@ -213,6 +243,8 @@ class s_vector
             }
             catch(const std::bad_alloc& e)
             {
+                delete[] this->elements;
+                this->elements = nullptr;
                 return false;
             }
             
@@ -225,6 +257,8 @@ class s_vector
             }
             catch(...)
             {
+                delete[] this->elements;
+                this->elements = nullptr;
                 return false;
             }
             
@@ -251,6 +285,7 @@ class s_vector
             catch(const std::bad_alloc& e)
             {
                 delete[] buffer;
+                buffer = nullptr;
                 return false;
             }
 
@@ -263,11 +298,13 @@ class s_vector
             }
             catch(...)
             {
+                delete[] buffer;
+                buffer = nullptr;
                 return false;
             }
             
-            delete[] this->elements;
             this->capacity *= 2;
+            delete[] this->elements;
             this->elements = buffer; 
 
             return true;          

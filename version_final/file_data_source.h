@@ -13,7 +13,7 @@ class file_data_source : public data_source<T>
             return new file_data_source<T>(this->file_name.c_str());
         }
 
-        file_data_source(const char* fn) : file(fn), file_name(fn)
+        explicit file_data_source(const char* fn) : file(fn), file_name(fn)
         {
             if (!file.is_open())
             {

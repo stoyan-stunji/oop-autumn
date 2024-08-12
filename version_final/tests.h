@@ -117,13 +117,12 @@ void test_1_s_vector()
 {
     try
     {
-        //int array[] = {1, 2, 3, 4, 5};
+        int array[] = {1, 2, 3, 4, 5};
         //s_vector<int> vector = {array, 5, 5}; // ctor_capacity;
-        //s_vector<int> vector = {array, 5, 8};
+        s_vector<int> vector = {array, 5, 8};
         //std::cout << vector[6]; // operator[];
-        //vector.pop_index(6); // pop_index();
+        std::cout << std::boolalpha << vector.pop_index(6) << '\n'; // false;
         //vector.set_capacity(5); // setter_capacity;
-        //std::cout << "not_broken\n";
     }
     catch(const std::exception& e)
     {
