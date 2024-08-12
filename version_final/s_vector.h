@@ -217,12 +217,12 @@ class s_vector
         size_t size;
         size_t capacity;
 
-        const bool is_valid_size(const size_t size) const
+        const bool is_valid_size(size_t size) const
         {
             return size >= 0 && size < this->capacity;
         }
 
-        const bool is_valid_capacity(const size_t capacity) const
+        const bool is_valid_capacity(size_t capacity) const
         {
             return capacity >= 8;
         }

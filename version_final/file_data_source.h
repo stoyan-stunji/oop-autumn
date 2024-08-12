@@ -37,7 +37,7 @@ class file_data_source : public data_source<T>
         {
             if(!this->file)
             {
-                throw std::runtime_error("file_data_source::next()::file_fail\n");
+                throw std::runtime_error("file_data_source::next()::file_error\n");
             }
             
             this->file.clear();

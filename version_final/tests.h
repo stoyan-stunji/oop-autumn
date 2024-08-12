@@ -65,11 +65,7 @@ void test_0_s_vector()
     vector.push_back(7);
     vector.push_back(8);
 
-    size_t size_1 = vector.get_size(); // 1-8;
-    for (size_t i = 0; i < size_1; ++i)
-    {
-        std::cout << vector[i] << ' ';
-    }
+    vector.print_io(); // 1 2 3 4 5 6 7 8;
     std::cout << '\n';
 
     vector.pop_index(0);
@@ -77,39 +73,27 @@ void test_0_s_vector()
     vector.pop_index(4);
 
     size_t size_2 = vector.get_size(); // 2 3 5 6 8;
-    for (size_t i = 0; i < size_2; ++i)
-    {
-        std::cout << vector[i] << ' ';
-    }
+    vector.print_io();
     std::cout << '\n';
 
     s_vector<int> copy = vector;
 
     size_t size_3 = copy.get_size(); // 2 3 5 6 8;
-    for (size_t i = 0; i < size_3; ++i)
-    {
-        std::cout << copy[i] << ' ';
-    }
+    copy.print_io();
     std::cout << '\n';
 
     copy.set_size(5);
     copy.set_capacity(8);
     copy.set_elements(array);
 
-    size_t size_4 = copy.get_size(); // 1-5;
-    for (size_t i = 0; i < size_4; ++i)
-    {
-        std::cout << copy[i] << ' ';
-    }
+    size_t size_4 = copy.get_size(); // 1 2 3 4 5;
+    copy.print_io();
     std::cout << '\n';
 
     vector = copy;
 
-    size_t size_5 = vector.get_size(); // 1-5;
-    for (size_t i = 0; i < size_5; ++i)
-    {
-        std::cout << vector[i] << ' ';
-    }
+    size_t size_5 = vector.get_size(); // 1 2 3 4 5;
+    vector.print_io();
     std::cout << '\n';
 }
 
@@ -117,11 +101,11 @@ void test_1_s_vector()
 {
     try
     {
-        int array[] = {1, 2, 3, 4, 5};
+        //int array[] = {1, 2, 3, 4, 5};
         //s_vector<int> vector = {array, 5, 5}; // ctor_capacity;
-        s_vector<int> vector = {array, 5, 8};
+        //s_vector<int> vector = {array, 5, 8};
         //std::cout << vector[6]; // operator[];
-        std::cout << std::boolalpha << vector.pop_index(6) << '\n'; // false;
+        //std::cout << std::boolalpha << vector.pop_index(6) << '\n'; // false;
         //vector.set_capacity(5); // setter_capacity;
     }
     catch(const std::exception& e)
@@ -137,49 +121,29 @@ void test_2_s_vector()
 
     vector.push_back(person("Philip", 20));
 
-    size_t size_1 = vector.get_size(); // Stoyan 20  Jessica 21  Kris 19  Philip 20;
-    for (size_t i = 0; i < size_1; ++i)
-    {
-        std::cout << vector[i] << ' ';
-    }
+    vector.print_io(); // Stoyan 20  Jessica 21  Kris 19  Philip 20;
     std::cout << '\n';
 
     vector.pop_index(2);
 
-    size_t size_2 = vector.get_size(); // Stoyan 20  Jessica 21  Philip 20;
-    for (size_t i = 0; i < size_2; ++i)
-    {
-        std::cout << vector[i] << ' ';
-    }
+    vector.print_io(); // Stoyan 20  Jessica 21  Philip 20;
     std::cout << '\n';
 
     s_vector<person> copy = vector;
 
-    size_t size_3 = copy.get_size(); // Stoyan 20  Jessica 21  Philip 20;
-    for (size_t i = 0; i < size_3; ++i)
-    {
-        std::cout << copy[i] << ' ';
-    }
+    copy.print_io(); // Stoyan 20  Jessica 21  Philip 20;
     std::cout << '\n';
 
     copy.set_size(3);
     copy.set_capacity(8);
     copy.set_elements(array);
 
-    size_t size_4 = copy.get_size(); // Stoyan 20  Jessica 21  Kris 19;
-    for (size_t i = 0; i < size_4; ++i)
-    {
-        std::cout << copy[i] << ' ';
-    }
+    copy.print_io(); // Stoyan 20  Jessica 21  Kris 19;
     std::cout << '\n';
 
     vector = copy;
 
-    size_t size_5 = vector.get_size(); // Stoyan 20  Jessica 21  Kris 19;
-    for (size_t i = 0; i < size_5; ++i)
-    {
-        std::cout << vector[i] << ' ';
-    }
+    vector.print_io(); // Stoyan 20  Jessica 21  Kris 19;
     std::cout << '\n';
 }
 
@@ -199,13 +163,10 @@ void test_0_default_data_source()
 
     std::cout << std::boolalpha << dds.reset() << '\n'; // true;
  
-    std::cout << std::boolalpha << dds.end() << '\n'; // false;
+    std::cout << std::boolalpha << dds.end() << '\n'; // false (always);
 
     s_vector<int> vec = dds.next_n(10); // 10 x 0;
-    for (size_t i = 0; i < vec.get_size(); ++i)
-    {
-        std::cout << vec[i] << ' ';
-    }
+    vec.print_io();
     std::cout << '\n';
 
     std::cout << dds() << '\n'; // 0;
@@ -231,13 +192,10 @@ void test_1_default_data_source()
 
     std::cout << std::boolalpha << dds.reset() << '\n'; // true;
 
-    std::cout << std::boolalpha << dds.end() << '\n'; // false;
+    std::cout << std::boolalpha << dds.end() << '\n'; // false (always);
 
     s_vector<person> vec = dds.next_n(3); // 3 x NULL -1;
-    for (size_t i = 0; i < vec.get_size(); ++i)
-    {
-        std::cout << vec[i] << ' ';
-    }
+    vec.print_io();
     std::cout << '\n';
 
     std::cout << dds() << '\n'; // NULL -1;
@@ -271,11 +229,9 @@ void test_0_file_data_source()
     {
         fds.next();
     }  
+
     s_vector<int> vec = fds.next_n(25); // 6-16;
-    for (size_t i = 0; i < vec.get_size(); ++i)
-    {
-        std::cout << vec[i] << ' ';
-    }
+    vec.print_io();
     std::cout << '\n';
 
     std::cout << std::boolalpha << (bool)fds << '\n'; // true;
@@ -310,10 +266,7 @@ void test_1_file_data_source()
     std::cout << std::boolalpha << fds.end() << '\n'; // false;
 
     s_vector<person> vec = fds.next_n(3); // Stoyan 20 Jessica 21 Kris 20;
-    for (size_t i = 0; i < vec.get_size(); ++i)
-    {
-        std::cout << vec[i] << ' ';
-    }
+    vec.print_io();
     std::cout << '\n';
 
     std::cout << fds() << '\n'; // Philip 19;
@@ -359,11 +312,9 @@ void test_0_array_data_source()
     {
         ads.next();
     }  
+
     s_vector<int> vec = ads.next_n(2); // 3 4;
-    for (size_t i = 0; i < vec.get_size(); ++i)
-    {
-        std::cout << vec[i] << ' ';
-    }
+    vec.print_io();
     std::cout << '\n';
 
     std::cout << std::boolalpha << (bool)ads << '\n'; // false;
@@ -405,10 +356,7 @@ void test_1_array_data_source()
     std::cout << std::boolalpha << ads.end() << '\n'; // false;
 
     s_vector<person> vec = ads.next_n(2); // Stoyan 20  Jessica 21;
-    for (size_t i = 0; i < vec.get_size(); ++i)
-    {
-        std::cout << vec[i] << ' ';
-    }
+    vec.print_io();
     std::cout << '\n';
 
     std::cout << std::boolalpha << (bool)ads << '\n'; // false;
@@ -444,6 +392,28 @@ void test_1_array_data_source()
     ads--;
 
     std::cout << ads() << '\n'; // Stoyan 20;
+
+    while(!(bool)ads) // Jessica 21  Kris 19  Ally 22
+    {
+        std::cout << ads() << ' ';
+    }
+    std::cout << '\n';
+
+    ads = ads + person("Dimitar", 20);
+
+    std::cout << ads() << '\n'; // Dimitar 20
+
+    std::cout << std::boolalpha << ads.end() << '\n'; // true
+
+    std::cout << std::boolalpha << ads.reset() << '\n'; // true
+
+    while(!(bool)ads) // Stoyan 20 Jessica 21  Kris 19  Ally 22 Dimitar 20
+    {
+        std::cout << ads() << ' ';
+    }
+    std::cout << '\n';
+
+    std::cout << std::boolalpha << ads.end() << '\n'; // true
 }
 
 //______________________________________________________________________________
@@ -452,15 +422,15 @@ void test_0_alternate_data_source()
 {
     file_data_source<int> fs("test_file_1.txt");
 
-    int arr[] = {100, 200, 300};
-    s_vector<int> vec = {arr, 3, 8};
+    int arr[] = {100, 200, 300, 400, 500};
+    s_vector<int> vec = {arr, 5, 8};
     array_data_source<int> ads(vec);
 
     data_source<int>* array[] = {&ads, &fs};
     s_vector<data_source<int>*> vector = {array, 2, 8};
     alternate_data_source<int> altds(vector);
 
-    while(!altds.end()) // 1 100 2 200 3 300 4 5 6...
+    while(!altds.end()) // 100 1 200 2 300 3 400 4 500 5 6 7 8 9 10 11 12 13 14 15 16; 
     {
         std::cout << altds.next() << ' ';
     }
@@ -476,16 +446,13 @@ void test_0_alternate_data_source()
     altds >> b;
     std::cout << b << '\n'; // 1;
 
-    s_vector<int> v = altds.next_n(10); // 200 2 300 3 4 5 6 7 8 9;
-    for (size_t i = 0; i < v.get_size(); ++i)
-    {
-        std::cout << v[i] << ' ';
-    }
+    s_vector<int> v = altds.next_n(10); // 200 2 300 3 400 4 500 5 6 7;
+    v.print_io();
     std::cout << '\n';
 
     std::cout << std::boolalpha << altds.end() << '\n'; // false;
 
-    while(!altds.end()) // 10 11 12 13 14 15 16
+    while(!altds.end()) // 8 9 10 11 12 13 14 15 16;
     {
         std::cout << altds.next() << ' ';
     }
@@ -523,10 +490,7 @@ void test_1_alternate_data_source()
     std::cout << b << '\n'; // Georgi 25;
 
     s_vector<person> v = altds.next_n(10); // Jessica 21 Martin 23  Kris 20  Philip 19  Apostol 15  Velizar 30;
-    for (size_t i = 0; i < v.get_size(); ++i)
-    {
-        std::cout << v[i] << ' ';
-    }
+    v.print_io();
     std::cout << '\n';
 
     std::cout << std::boolalpha << altds.reset() << '\n'; // true;
@@ -552,11 +516,8 @@ void test_0_generator_data_source()
 
     std::cout << gds.next() << '\n'; // 0
 
-    s_vector<int> vector = gds.next_n(10);
-    for (size_t i = 0; i < vector.get_size(); ++i) // 1-10;
-    {
-       std::cout << vector[i] << ' ';
-    }
+    s_vector<int> vector = gds.next_n(10); // 1 2 3 4 5 6 7 8 9 10;
+    vector.print_io();
     std::cout << '\n';
 
     std::cout << std::boolalpha << (bool)gds << '\n'; // false (always);
@@ -573,13 +534,10 @@ void test_0_generator_data_source()
 
     generator_data_source<int> gds_o(consecutive_even_numbers);
 
-    std::cout << gds_o.next() << '\n'; // 2
+    std::cout << gds_o.next() << '\n'; // 2;
 
-    s_vector<int> vector_o = gds_o.next_n(25);
-    for (size_t i = 0; i < vector_o.get_size(); ++i) // 4-52;
-    {
-       std::cout << vector_o[i] << ' ';
-    }
+    s_vector<int> vector_o = gds_o.next_n(25); // 4-52;
+    vector_o.print_io();
     std::cout << '\n';
 }
 
@@ -786,6 +744,7 @@ void run()
     std::cout << "\n\nTASK_2: \n";
     std::cout << "[enter file name]: "; // user_file
     task_2();
+
 }
 
 #endif
