@@ -15,7 +15,7 @@ class data_source
 
         virtual T next() = 0;
 
-        virtual s_vector<T> next_n(const size_t n)
+        virtual s_vector<T> next_n(size_t n)
         {
             if(n < 1)
             {
