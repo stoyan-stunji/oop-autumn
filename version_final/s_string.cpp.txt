@@ -1,0 +1,175 @@
+#ifndef S_VECTOR_H
+#define S_VECTOR_H
+
+#include <iostream>
+#include <fstream>
+#include <stdexcept>
+
+class seq // sequence or s_string;
+{
+    private:
+
+        char* d;
+        size_t s;
+
+        bool copy(const seq& o)
+        {
+            if(!o.d)
+            {
+                return false;
+            }
+
+            this->s = o.s;
+
+            try
+            {
+                this->d = new char[this->s + 1];
+            }
+            catch(const std::bad_alloc& e)
+            {
+                delete[] this->d;
+                this->d = nullptr;
+                return false;
+            }
+
+            for (size_t i = 0; i < this->s; i++)
+            {
+                this->d[i] = o.d[i];
+            }
+            this->d[this->s]  = '\0';
+            return true;
+        }
+
+        void free()
+        {
+            delete[] this->d;
+            this->d = nullptr;
+        }
+
+        size_t get_len(char* str) const
+        {
+            size_t c = 0;
+            while(*str != '\0')
+            {
+                ++c;
+                ++str;
+            }
+            return c;
+        }
+
+    public:
+
+        seq()
+        {
+            this->s = 0;
+            try
+            {
+                this->d = new char[this->s + 1];
+                this->d[this->s] = '\0';
+            }
+            catch(const std::bad_alloc& e)
+            {
+                throw std::runtime_error("seq::ctor::alloc");
+            }
+
+            
+        }
+
+        seq(char* str)
+        {
+            if(!str)
+            {
+                throw std::runtime_error("seq::ctor::str");
+            }
+
+            this->s = get_len(str);
+
+            try
+            {
+                this->d = new char[this->s + 1];
+            }
+            catch(const std::bad_alloc& e)
+            {
+                throw std::runtime_error("seq::ctor(p)::alloc");
+            }
+            
+            for (size_t i = 0; i < this->s; i++)
+            {
+                this->d[i] = str[i];
+            }
+            this->d[this->s] = '\0';
+        }
+
+        seq(const seq& o)
+        {
+            if(!copy(o))
+            {
+                throw std::runtime_error("seq::copy_ctor");
+            }
+        }
+
+        seq& operator=(const seq& o)
+        {
+            if(this != &o)
+            {
+                free();
+                if(!copy(o))
+                {
+                    throw std::runtime_error("seq::op=");
+                }
+            }
+            return *this;
+        }
+
+        ~seq()
+        {
+            free();
+        }
+
+        size_t get_size() const
+        {
+            return this->s;
+        }
+
+        seq operator+(char c)
+        {
+            char* temp = new char[this->s + 2];
+
+            for (size_t i = 0; i < this->s; i++)
+            {
+                temp[i] = this->d[i];
+            }
+            temp[this->s++] = c;
+            temp[this->s] = '\0';
+
+            seq copy(temp);
+            delete[] temp;
+            return copy;
+        }
+
+        seq& operator+=(char c)
+        {
+            return *this = *this + c;
+        }
+
+        const char& operator[](size_t i) const
+        {
+            if(i >= this->s)
+            {
+                throw std::out_of_range("seq::op[]");
+            }
+
+            return this->d[i];
+        }
+
+        friend std::ostream& operator<<(std::ostream& o, const seq& s)
+        {
+            for (size_t i = 0; i < s.get_size(); i++)
+            {
+                o << s[i];
+            }
+            return o;
+        }
+};
+
+#endif
